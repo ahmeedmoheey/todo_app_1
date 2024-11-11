@@ -22,7 +22,7 @@ class _SettingsTabState extends State<SettingsTab> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text('Language',style: TextStyle(
+         const Text('Language',style: TextStyle(
               fontSize:14 ,
               fontWeight: FontWeight.w700
           ),),
@@ -44,8 +44,6 @@ class _SettingsTabState extends State<SettingsTab> {
                     fontSize: 14,
                     color: ColorsManager.blue
                 ),
-
-
                 ),
                 DropdownButton<String>(
                   underline: SizedBox(
@@ -53,7 +51,6 @@ class _SettingsTabState extends State<SettingsTab> {
                       color: Colors.white,
                     ),
                   ),
-
                   style: GoogleFonts.poppins(
                       color: Colors.black,
                       fontSize: 14,
@@ -70,7 +67,6 @@ class _SettingsTabState extends State<SettingsTab> {
                     );
                   }).toList(),
                   onChanged: (newLanguage) {
-                    print(selectedLanguage);
                     selectedLanguage = newLanguage;
                     setState(() {
 
@@ -82,11 +78,11 @@ class _SettingsTabState extends State<SettingsTab> {
             ),
           ),
           const SizedBox(height:20,),
-          Text('Theme',style: TextStyle(
+            const Text('Theme',style: TextStyle(
               fontSize:14 ,
               fontWeight: FontWeight.w700
           ),),
-          SizedBox(height: 20,),
+        const  SizedBox(height: 20,),
           Container(
             height: 48,
             width: double.infinity,
@@ -99,14 +95,14 @@ class _SettingsTabState extends State<SettingsTab> {
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(selectedTheme??'',style: TextStyle(
+                Text(selectedTheme??'',style: const TextStyle(
                     fontWeight: FontWeight.w400,
                     fontSize: 14,
                     color: ColorsManager.blue
                 ),
                 ),
                 DropdownButton<String>(
-                  underline: SizedBox(
+                  underline:  const SizedBox(
                     child: Card(
                       color: Colors.white,
                     ),

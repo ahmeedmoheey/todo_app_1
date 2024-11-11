@@ -3,16 +3,15 @@ import 'package:flutter/material.dart';
 import '../../core/utils/colors_manager.dart';
 import '../../core/utils/my_text_style.dart';
 
-
 class MyTheme {
   static ThemeData lightTheme = ThemeData(
     useMaterial3: false,
     primaryColor: ColorsManager.blue,
     appBarTheme: AppBarTheme(
       backgroundColor: ColorsManager.blue,
-      elevation: 4    ,
+      elevation: 0    ,
       centerTitle: true,
-      titleTextStyle:MyTextStyles.lightAppBarTextStyle,
+      titleTextStyle:MyTextStyle.lightAppBarTextStyle,
     ),
     scaffoldBackgroundColor: ColorsManager.scaffoldBgLight,
     bottomNavigationBarTheme:  const  BottomNavigationBarThemeData(
@@ -54,7 +53,7 @@ class MyTheme {
     ),
     dividerColor: ColorsManager.blue,
     textTheme: TextTheme(
-      titleMedium: MyTextStyles.cardTittleTextStyle,
+      titleMedium: MyTextStyle.cardTittleTextStyle,
     ),
 
   );
@@ -65,7 +64,7 @@ class MyTheme {
       backgroundColor: ColorsManager.blue,
       elevation: 4    ,
       centerTitle: true,
-      titleTextStyle:MyTextStyles.lightAppBarTextStyle,
+      titleTextStyle:MyTextStyle.lightAppBarTextStyle,
     ),
     scaffoldBackgroundColor: ColorsManager.darkBg,
     bottomNavigationBarTheme:  const  BottomNavigationBarThemeData(
@@ -109,7 +108,7 @@ class MyTheme {
     ),
     dividerColor: ColorsManager.darkBg,
     textTheme: TextTheme(
-      titleMedium: MyTextStyles.cardTittleTextStyle,
+      titleMedium: MyTextStyle.cardTittleTextStyle,
     ),
 
   );
