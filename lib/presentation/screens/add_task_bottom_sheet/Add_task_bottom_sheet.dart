@@ -1,9 +1,9 @@
 
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app_1/data_base_manager/todo_dm.dart';
-
 import '../../../core/utils/colors_manager.dart';
 import '../../../core/utils/date_utils.dart';
 import '../../../date_ex/date_formatted.dart';
@@ -120,21 +120,37 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   void addTodoFireStore() {
    if (formKey.currentState?.validate()==false) return;
      CollectionReference todoCollection= FirebaseFirestore.instance.collection(TodoDM.collectionName);
-     DocumentReference doc = todoCollection.doc();
+     DocumentReference documentReference = todoCollection.doc();
      TodoDM todo = TodoDM(
-       id: doc.id,
+       id: documentReference.id,
        title: titleController.text,
        description: descriptionController.text,
-       date: Timestamp.fromMillisecondsSinceEpoch(userSelectedDate.millisecond),
+       dateTime:userSelectedDate.copyWith(
+         second: 0,
+         microsecond: 0,
+         minute: 0,
+         millisecond: 0,
+         hour: 0,
+       ),
        isDone: false
      );
-     doc.set(todo.toFireStore())
-         .then((_){},).
-     onError((error, stackTrace){},).
-     timeout(Duration(milliseconds: 500),onTimeout: (){
-       if(mounted){
+
+   documentReference
+       .set(todo.toFireStore())
+       .then(
+         (_) {
+       if (context.mounted) {
          Navigator.pop(context);
        }
+     },
+   )
+       .onError(
+         (error, stackTrace) {},
+   ).
+     timeout(Duration(milliseconds: 500),onTimeout: (){
+     if (context.mounted) {
+       Navigator.pop(context);
+     }
      },);
   }
 }

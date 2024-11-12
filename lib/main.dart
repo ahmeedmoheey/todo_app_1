@@ -12,7 +12,7 @@ void main() async {
         messagingSenderId: '',
         projectId: 'todo-app-1-a3648'),
   );
-  await FirebaseFirestore.instance.disableNetwork();
+  await FirebaseFirestore.instance.enableNetwork();
 
   runApp(MyApp());
 }
