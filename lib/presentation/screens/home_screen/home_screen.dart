@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app_1/core/utils/colors_manager.dart';
 
 import '../add_task_bottom_sheet/Add_task_bottom_sheet.dart';
 import '../tabs/settings_tab/settings_tab.dart';
@@ -7,6 +8,7 @@ import '../tabs/task_tab/task_tab.dart';
 
 class HomeScreen extends StatefulWidget {
   HomeScreen({super.key});
+
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -33,7 +35,10 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text('ToDo List'),
+        title: const Text('ToDo List',style:TextStyle(
+          color: ColorsManager.white
+
+        ),),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
       floatingActionButton: buildFab(),

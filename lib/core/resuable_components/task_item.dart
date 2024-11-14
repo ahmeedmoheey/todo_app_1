@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:todo_app_1/core/utils/my_text_style.dart';
+import 'package:todo_app_1/core/utils/route_managers.dart';
+import 'package:todo_app_1/presentation/screens/tabs/task_edit/task_edit.dart';
 import '../../data_base_manager/todo_dm.dart';
 import '../../data_base_manager/user_DM.dart';
 import '../utils/colors_manager.dart';
@@ -51,7 +53,7 @@ class TaskItem extends StatelessWidget {
                 bottomRight: Radius.circular(15)),
             flex: 2,
             onPressed: (context) {
-
+              Navigator.push(context, MaterialPageRoute(builder: (context) => TaskEdit()));
             },
             backgroundColor: ColorsManager.blue,
             foregroundColor: Colors.white,
@@ -94,13 +96,13 @@ class TaskItem extends StatelessWidget {
                   ),
                 ],
               ),
-              Spacer(),
+              const Spacer(),
               Container(
                   padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
                   decoration: BoxDecoration(
                       color: ColorsManager.blue,
                       borderRadius: BorderRadius.circular(10)),
-                  child: Icon(
+                  child:const Icon(
                     Icons.check,
                     color: ColorsManager.white,
                   ))
@@ -120,4 +122,6 @@ class TaskItem extends StatelessWidget {
     DocumentReference todoDoc = todoCollection.doc(todo.id);
     await todoDoc.delete();
   }
+
+
 }

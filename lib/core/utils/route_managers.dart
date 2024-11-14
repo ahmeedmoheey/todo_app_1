@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:todo_app_1/presentation/screens/tabs/task_edit/task_edit.dart';
 
 import '../../auth/login/login.dart';
 import '../../auth/regester/regester.dart';
@@ -9,6 +10,7 @@ class RoutesManager {
   static const String home = '/home';
   static const String register = '/register';
   static const String login = '/login';
+  static const String edit = '/edit';
 
   static Route? router(RouteSettings settings) {
     switch (settings.name) {
@@ -24,6 +26,12 @@ class RoutesManager {
         return MaterialPageRoute(
           builder: (context) => const Login(),
         );
+      case edit:
+        return MaterialPageRoute(
+          builder: (context) => const TaskEdit(),
+        );
+
+
     }
   }
 }

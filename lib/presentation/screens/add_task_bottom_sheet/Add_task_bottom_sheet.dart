@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
 import 'package:todo_app_1/core/utils/date_utils.dart';
 import 'package:todo_app_1/core/utils/my_text_style.dart';
-
+import 'package:todo_app_1/core/utils/strings_manager.dart';
 import '../../../data_base_manager/todo_dm.dart';
 import '../../../data_base_manager/user_DM.dart';
 
@@ -12,7 +12,6 @@ class AddTaskBottomSheet extends StatefulWidget {
 
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
-
   static Future show(context) {
     return showModalBottomSheet(
         isScrollControlled: true,
@@ -28,7 +27,6 @@ class AddTaskBottomSheet extends StatefulWidget {
 
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   DateTime selectedDate = DateTime.now();
-
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
   GlobalKey<FormState> formKey = GlobalKey();
@@ -46,7 +44,7 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             Text(
-              'Add new task',
+              StringsManager.addNewTask ,
               textAlign: TextAlign.center,
               style: MyTextStyle.bottomSheetTitle,
             ),
@@ -128,7 +126,6 @@ class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
   void addTaskToFireStore() {
     // form is valid
     if (formKey.currentState!.validate() == false) return;
-
     CollectionReference usersCollection =
     FirebaseFirestore.instance.collection(UserDM.collectionName);
     CollectionReference todoCollection = usersCollection

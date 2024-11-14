@@ -63,6 +63,7 @@ class TasksTabState extends State<TasksTab> {
   Widget buildCalender() {
     "SELECT * FROM Customer";
     return EasyInfiniteDateTimeLine(
+
       firstDate: DateTime.now().subtract(Duration(days: 365)),
       focusDate: calenderSelectedDate,
       lastDate: DateTime.now().add(Duration(days: 365)),

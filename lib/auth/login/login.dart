@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:todo_app_1/auth/regester/regester.dart';
 import 'package:todo_app_1/core/utils/colors_manager.dart';
 import 'package:todo_app_1/core/utils/images_manager.dart';
 import 'package:todo_app_1/core/utils/my_text_style.dart';
@@ -132,11 +133,10 @@ class _LoginState extends State<Login> {
                       'Sign-In',
                       style: MyTextStyle.buttonText,
                     )),
-                SizedBox(height: 10,),
+                 const SizedBox(height: 10,),
                 InkWell(
                   onTap: () {
-                    Navigator.pop(context);
-                  },
+                    Navigator.push(context, MaterialPageRoute(builder:(context) => const Register()));                  },
                   child: Container(
                     alignment: Alignment.center,
                     child: Text('Don’t have an account? Create Account',style: GoogleFonts.poppins(

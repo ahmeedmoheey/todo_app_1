@@ -213,7 +213,7 @@ class _RegisterState extends State<Register> {
                   alignment: Alignment.center,
                   child: InkWell(
                     onTap:() {
-                      Navigator.push(context, MaterialPageRoute(builder:(context) => Login()));
+                      Navigator.pop(context);
                       },
                     child: Text('already have an account',style:
                     GoogleFonts.poppins(
@@ -302,4 +302,3 @@ class _RegisterState extends State<Register> {
 
 
 }
-
