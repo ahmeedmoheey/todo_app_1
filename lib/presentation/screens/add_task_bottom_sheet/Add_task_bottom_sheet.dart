@@ -1,156 +1,173 @@
-
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'package:todo_app_1/data_base_manager/todo_dm.dart';
-import '../../../core/utils/colors_manager.dart';
-import '../../../core/utils/date_utils.dart';
-import '../../../date_ex/date_formatted.dart';
+import 'package:todo_app_1/core/utils/date_utils.dart';
+import 'package:todo_app_1/core/utils/my_text_style.dart';
+
+import '../../../data_base_manager/todo_dm.dart';
+import '../../../data_base_manager/user_DM.dart';
 
 
 class AddTaskBottomSheet extends StatefulWidget {
-  AddTaskBottomSheet({super.key});
+  const AddTaskBottomSheet({super.key});
+
   @override
   State<AddTaskBottomSheet> createState() => _AddTaskBottomSheetState();
 
-  static void show(BuildContext context){
-    showModalBottomSheet(
-      context: context, builder: (context) => Padding(
-      padding: MediaQuery.of(context).viewInsets,
-      child: AddTaskBottomSheet(),
-    ),);
+  static Future show(context) {
+    return showModalBottomSheet(
+        isScrollControlled: true,
+        context: context,
+        builder: (context) {
+          return Padding(
+            padding: MediaQuery.of(context).viewInsets,
+            child: AddTaskBottomSheet(),
+          );
+        });
   }
 }
 
 class _AddTaskBottomSheetState extends State<AddTaskBottomSheet> {
-  DateTime userSelectedDate =DateTime.now();
+  DateTime selectedDate = DateTime.now();
+
   TextEditingController titleController = TextEditingController();
   TextEditingController descriptionController = TextEditingController();
-  var formKey = GlobalKey<FormState>();
+  GlobalKey<FormState> formKey = GlobalKey();
+
+  List<int> arr = [];
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: EdgeInsets.all(14),
+      padding: EdgeInsets.all(12),
+      height: MediaQuery.of(context).size.height * .5,
       child: Form(
         key: formKey,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Text('Add new task',textAlign: TextAlign.center,style:  GoogleFonts.poppins(
-              fontWeight:FontWeight.w700 ,
-              fontSize:18,
-            )),
-            const SizedBox(height: 8,),
+            Text(
+              'Add new task',
+              textAlign: TextAlign.center,
+              style: MyTextStyle.bottomSheetTitle,
+            ),
+            const SizedBox(
+              height: 8,
+            ),
             TextFormField(
               validator: (input) {
-                if(input== null || input.trim().isEmpty){
-                  return 'Plz, enter your title' ;
+                if (input == null || input.trim().isEmpty) {
+                  return 'Plz, enter task title';
                 }
+                return null;
               },
               controller: titleController,
               decoration: InputDecoration(
-                  hintText: "Enter yout task tittle",
-                  hintStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: ColorsManager.addTaskBottom
-                  )
-              ),
+                  hintText: 'enter your task title',
+                  hintStyle: MyTextStyle.hint),
             ),
-            const SizedBox(height: 8,),
+            const SizedBox(
+              height: 8,
+            ),
             TextFormField(
               validator: (input) {
-                if(input== null || input.trim().isEmpty){
-                  return 'Plz, enter description' ;
+                if (input == null || input.trim().isEmpty) {
+                  return 'Plz, enter description';
                 }
+                if (input.length < 6) {
+                  return 'Sorry, description should be at least 6 chars';
+                }
+                return null;
               },
               controller: descriptionController,
               decoration: InputDecoration(
-                  hintText: "Enter your task details",
-                  hintStyle: TextStyle(
-                      fontSize: 16,
-                      fontWeight: FontWeight.w400,
-                      color: ColorsManager.addTaskBottom
-                  )
-              ),
+                  hintText: 'enter your task description',
+                  hintStyle: MyTextStyle.hint),
             ),
-            const SizedBox(height: 8,),
-            Text('Select Date',style: TextStyle(
-              fontSize: 18,
-              fontWeight: FontWeight.w400,
-
-            ),),
-            const SizedBox(height: 8,),
+            const SizedBox(
+              height: 8,
+            ),
+            Text(
+              'Select date',
+              style: MyTextStyle.date,
+            ),
             InkWell(
-              onTap: () {
-                showTaskDatePicker();
-              },
-              child: Text(
-                formatDate(userSelectedDate),
-                textAlign: TextAlign.center,style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.w400,
-                  color: ColorsManager.addTaskBottom
-              ),),
-            ),
-          const  Spacer(),
-            ElevatedButton(onPressed:() {
-               addTodoFireStore ();
-            },
-                child: Text('Add Task'))
-
+                onTap: () {
+                  showTaskDate(context);
+                },
+                child: Text(
+                  selectedDate.toFormattedDate,
+                  textAlign: TextAlign.center,
+                  style: MyTextStyle.hint,
+                )),
+            const Spacer(),
+            ElevatedButton(
+                onPressed: () {
+                  addTaskToFireStore();
+                },
+                child: const Text('Add task'))
           ],
         ),
       ),
     );
   }
-  void showTaskDatePicker() async {
-    userSelectedDate = await showDatePicker(
-        context: context,
-        initialDate: DateTime.now(),
-        firstDate: DateTime.now(),
-        lastDate: DateTime.now().add(Duration(days: 365)))?? userSelectedDate;
-    setState(() {
 
-    });
+  void showTaskDate(context) async {
+    selectedDate = await showDatePicker(
+      context: context,
+      firstDate: DateTime.now(),
+      initialDate: DateTime.now(),
+      lastDate: DateTime.now().add(const Duration(
+        days: 365,
+      )),
+    ) ??
+        selectedDate;
+
+    setState(() {});
   }
 
-  void addTodoFireStore() {
-   if (formKey.currentState?.validate()==false) return;
-     CollectionReference todoCollection= FirebaseFirestore.instance.collection(TodoDM.collectionName);
-     DocumentReference documentReference = todoCollection.doc();
-     TodoDM todo = TodoDM(
-       id: documentReference.id,
-       title: titleController.text,
-       description: descriptionController.text,
-       dateTime:userSelectedDate.copyWith(
-         second: 0,
-         microsecond: 0,
-         minute: 0,
-         millisecond: 0,
-         hour: 0,
-       ),
-       isDone: false
-     );
+  void addTaskToFireStore() {
+    // form is valid
+    if (formKey.currentState!.validate() == false) return;
 
-   documentReference
-       .set(todo.toFireStore())
-       .then(
-         (_) {
-       if (context.mounted) {
-         Navigator.pop(context);
-       }
-     },
-   )
-       .onError(
-         (error, stackTrace) {},
-   ).
-     timeout(Duration(milliseconds: 500),onTimeout: (){
-     if (context.mounted) {
-       Navigator.pop(context);
-     }
-     },);
+    CollectionReference usersCollection =
+    FirebaseFirestore.instance.collection(UserDM.collectionName);
+    CollectionReference todoCollection = usersCollection
+        .doc(UserDM.currentUser!.id)
+        .collection(TodoDM.collectionName);
+    DocumentReference documentReference = todoCollection.doc(); // auto id
+
+    TodoDM todo = TodoDM(
+        id: documentReference.id,
+        title: titleController.text,
+        description: descriptionController.text,
+        dateTime: selectedDate.copyWith(
+          second: 0,
+          millisecond: 0,
+          minute: 0,
+          microsecond: 0,
+          hour: 0,
+        ),
+        isDone: false);
+    documentReference
+        .set(todo.toFireStore())
+        .then(
+          (_) {
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      },
+    )
+        .onError(
+          (error, stackTrace) {},
+    )
+        .timeout(
+      const Duration(seconds: 4),
+      onTimeout: () {
+        print('enter timeout');
+        if (context.mounted) {
+          Navigator.pop(context);
+        }
+      },
+    );
   }
 }

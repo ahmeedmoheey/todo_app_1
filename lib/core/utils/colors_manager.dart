@@ -11,5 +11,6 @@ class ColorsManager {
   static const Color fieldBlack = Color(0xFF000000);
   static const Color blackAccent = Color(0xFF383838);
   static const Color black = Color(0xFF303030);
+  static const Color hint = Color(0xFFA9A9A9);
 
 }

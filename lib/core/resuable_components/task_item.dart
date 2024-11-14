@@ -1,96 +1,123 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:todo_app_1/data_base_manager/todo_dm.dart';
-
+import 'package:todo_app_1/core/utils/my_text_style.dart';
+import '../../data_base_manager/todo_dm.dart';
+import '../../data_base_manager/user_DM.dart';
 import '../utils/colors_manager.dart';
 
+
 class TaskItem extends StatelessWidget {
-  TaskItem({super.key, required this.todo});
-  TodoDM todo ;
+  TaskItem({super.key, required this.todo, required this.onDeletedTask});
+
+  TodoDM todo;
+
+  Function onDeletedTask;
+
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: EdgeInsets.all(8),
+      margin: REdgeInsets.all(8),
+      decoration: BoxDecoration(
+          borderRadius: BorderRadius.circular(15),
+          color: Theme.of(context).colorScheme.onPrimary),
       child: Slidable(
-        startActionPane:  ActionPane(
-          extentRatio: 0.3,
-          // A motion is a widget used to control how the pane animates.
-          motion: const DrawerMotion(),
-          // A pane can dismiss the Slidable.
-          // dismissible: DismissiblePane(onDismissed: () {}),
-
-          // All actions are defined in the children parameter.
-          children:  [
-            // A SlidableAction can have an icon and/or a label.
+        startActionPane: ActionPane(
+          extentRatio: .3,
+          motion: BehindMotion(),
+          children: [
             SlidableAction(
-              autoClose: true,
+              borderRadius: BorderRadius.only(
+                  topLeft: Radius.circular(15),
+                  bottomLeft: Radius.circular(15)),
+              flex: 2,
               onPressed: (context) {
+                deleteTodoFromFireStore(todo);
+                onDeletedTask();
               },
-              borderRadius: BorderRadius.circular(15),
-              backgroundColor: Color(0xFFFE4A49),
+              backgroundColor: Colors.red,
               foregroundColor: Colors.white,
               icon: Icons.delete,
               label: 'Delete',
             ),
-
           ],
         ),
-        endActionPane: ActionPane(
-          extentRatio: 0.3,
-          motion: const DrawerMotion(),
-          children:  [
-            SlidableAction(
-              autoClose: true,
-              onPressed: (context) {
-              },
-              borderRadius: BorderRadius.circular(15),
-              backgroundColor: ColorsManager.blue,
-              foregroundColor: Colors.white,
-              icon: Icons.edit,
-              label: 'Edit',
-            ),
+        endActionPane:
+        ActionPane(extentRatio: 0.3, motion: DrawerMotion(), children: [
+          SlidableAction(
+            borderRadius: BorderRadius.only(
+                topRight: Radius.circular(15),
+                bottomRight: Radius.circular(15)),
+            flex: 2,
+            onPressed: (context) {
 
-          ],
-        ),
-        child: Card(
-          child: Padding(
-            padding: const EdgeInsets.symmetric(  vertical:12 ,horizontal: 8),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Container(
-                  color: Theme.of(context).dividerColor,
-                  height: 62,
-                  width: 3,
+            },
+            backgroundColor: ColorsManager.blue,
+            foregroundColor: Colors.white,
+            icon: Icons.edit,
+            label: 'Edit',
+          ),
+        ]),
+        child: Container(
+          //padding: EdgeInsets.all(18),
+          padding: EdgeInsets.all(10),
+          decoration: BoxDecoration(
+              color: Theme.of(context).colorScheme.onPrimary,
+              borderRadius: BorderRadius.circular(15)),
+          child: Row(
+            children: [
+              Container(
+                height: 62,
+                width: 4,
+                decoration: BoxDecoration(
+                  color: ColorsManager.blue,
+                  borderRadius: BorderRadius.circular(10),
                 ),
-                SizedBox(width: 25 ,),
-                Column(
-                  children: [
-                    Text(todo.title,style: Theme.of(context).textTheme.titleMedium),
-                    SizedBox(height: 12,),
-                    Text(todo.description,style: Theme.of(context).textTheme.titleMedium),
-                    Row(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        Icon(Icons.lock_clock),
-                        Text('10:30' ,style: Theme.of(context).textTheme.titleMedium?.copyWith(color: Colors.black),)
-                      ],
-                    )
-                  ],
-                ),
-                Spacer(),
-                Container(
-                    padding: EdgeInsets.symmetric(horizontal: 12, vertical: 2),
-                    decoration: BoxDecoration(
-                        color: Theme.of(context).primaryColor,
-                        borderRadius: BorderRadius.circular(10)
-                    ),
-                    child: Icon(Icons.check,color: ColorsManager.white,size: 28,))
-              ],
-            ),
+              ),
+              const SizedBox(
+                width: 7,
+              ),
+              Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
+                    todo.title,
+                    style: MyTextStyle.todoTitle,
+                  ),
+                  SizedBox(
+                    height: 4,
+                  ),
+                  Text(
+                    todo.description,
+                    style: MyTextStyle.todoDesc,
+                  ),
+                ],
+              ),
+              Spacer(),
+              Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10, vertical: 3),
+                  decoration: BoxDecoration(
+                      color: ColorsManager.blue,
+                      borderRadius: BorderRadius.circular(10)),
+                  child: Icon(
+                    Icons.check,
+                    color: ColorsManager.white,
+                  ))
+            ],
           ),
         ),
       ),
     );
+  }
+
+  void deleteTodoFromFireStore(TodoDM todo) async {
+    print('enter delete function');
+    CollectionReference todoCollection = FirebaseFirestore.instance
+        .collection(UserDM.collectionName)
+        .doc(UserDM.currentUser!.id)
+        .collection(TodoDM.collectionName); // todo
+    DocumentReference todoDoc = todoCollection.doc(todo.id);
+    await todoDoc.delete();
   }
 }

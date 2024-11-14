@@ -9,10 +9,9 @@ void main() async {
     options: FirebaseOptions(
         apiKey: 'AIzaSyDFSXCBVLQXZN2tpN0lK8hQ6TEzysUTiSU',
         appId: 'com.example.todo_app_1',
-        messagingSenderId: '',
+        messagingSenderId: '273888736584',
         projectId: 'todo-app-1-a3648'),
   );
   await FirebaseFirestore.instance.enableNetwork();
-
   runApp(MyApp());
 }

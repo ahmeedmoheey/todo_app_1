@@ -11,38 +11,65 @@ class HomeScreen extends StatefulWidget {
   @override
   State<HomeScreen> createState() => _HomeScreenState();
 }
+
 class _HomeScreenState extends State<HomeScreen> {
-  int selectedndex = 0;
-  List<Widget> tabs = [TasksTab(), SettingsTab()];
+  GlobalKey<TasksTabState> tasksTabKey = GlobalKey();
+  int currentIndex = 0;
+  List<Widget> tabs = [];
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    tabs = [
+      TasksTab(
+        key: tasksTabKey,
+      ),
+      SettingsTab(),
+    ];
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      extendBody: true,
       appBar: AppBar(
         title: const Text('ToDo List'),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.centerDocked,
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          AddTaskBottomSheet.show(context);
-        }, child: const Icon(Icons.add),
-      ),
-      bottomNavigationBar: BottomAppBar(
-        notchMargin: 8,
-        child: BottomNavigationBar(
-          currentIndex:selectedndex,
-          onTap: (index) {
-            selectedndex = index;
+      floatingActionButton: buildFab(),
+      bottomNavigationBar: buildBottomNavBar(),
+      body: tabs[currentIndex],
+    );
+  }
+
+  Widget buildBottomNavBar() => ClipRRect(
+    clipBehavior: Clip.antiAlias,
+    borderRadius: const BorderRadius.only(
+      topLeft: Radius.circular(15),
+      topRight: Radius.circular(15),
+    ),
+    child: BottomAppBar(
+      notchMargin: 8,
+      child: BottomNavigationBar(
+          currentIndex: currentIndex,
+          onTap: (tappedIndex) {
+            currentIndex = tappedIndex;
             setState(() {});
           },
           items: const [
             BottomNavigationBarItem(icon: Icon(Icons.list), label: 'Tasks'),
             BottomNavigationBarItem(
-                icon: Icon(Icons.settings), label: 'Settings')
-          ],
-        ),
-      ),
-      body: tabs[selectedndex],
-    );
-  }
+                icon: Icon(Icons.settings_outlined), label: 'Settings'),
+          ]),
+    ),
+  );
+
+  Widget buildFab() => FloatingActionButton(
+    onPressed: () async {
+      await AddTaskBottomSheet.show(context); // 2
+      // access reading data from firestore
+      tasksTabKey.currentState?.getTodosFromFireStore();
+    },
+    child: Icon(Icons.add),
+  );
 }

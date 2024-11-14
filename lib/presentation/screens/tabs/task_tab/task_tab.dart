@@ -1,64 +1,113 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:easy_date_timeline/easy_date_timeline.dart';
 import 'package:flutter/material.dart';
-import '../../../../core/resuable_components/task_item.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:todo_app_1/core/resuable_components/task_item.dart';
+import 'package:todo_app_1/core/utils/my_text_style.dart';
+import 'package:todo_app_1/date_ex/date_ex.dart';
+
 import '../../../../core/utils/colors_manager.dart';
 import '../../../../data_base_manager/todo_dm.dart';
+import '../../../../data_base_manager/user_DM.dart';
+
 class TasksTab extends StatefulWidget {
   const TasksTab({super.key});
+
   @override
-  State<TasksTab> createState() => _TasksTabState();
+  State<TasksTab> createState() => TasksTabState();
 }
 
-class _TasksTabState extends State<TasksTab> {
-  DateTime calenderSelectedDate = DateTime.now();
+class TasksTabState extends State<TasksTab> {
+  DateTime calenderSelectedDate = DateTime.now(); //
   List<TodoDM> todosList = [];
 
+  /// empty state
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    getTodosFromFireStore(); //
+  }
 
   @override
   Widget build(BuildContext context) {
-    readTodoFromFireStore();
     return Column(
       children: [
         Stack(
           children: [
-            Container(color: ColorsManager.blue,height: 100,),
+            Container(
+              color: ColorsManager.blue,
+              height: 90.h,
+            ),
             buildCalender(),
-
           ],
         ),
-        const SizedBox(
-          height: 20,
-        ),
-        Expanded(child: ListView.builder(itemBuilder: (context, index) => TaskItem(todo: todosList[index]),itemCount: todosList.length,))
+        Expanded(
+            child: ListView.builder(
+              itemBuilder: (context, index) {
+                print(todosList.length);
+                return TaskItem(
+                  todo: todosList[index],
+                  onDeletedTask: () {
+                    getTodosFromFireStore();
+                  },
+                );
+              },
+              itemCount: todosList.length,
+            ))
       ],
     );
   }
-  buildCalender(){
-    return Column(
-      children: [
-        EasyDateTimeLine(
-          initialDate: DateTime.now(),
-          onDateChange: (selectedDate) {
-            //`selectedDate` the new date selected.
+
+  Widget buildCalender() {
+    "SELECT * FROM Customer";
+    return EasyInfiniteDateTimeLine(
+      firstDate: DateTime.now().subtract(Duration(days: 365)),
+      focusDate: calenderSelectedDate,
+      lastDate: DateTime.now().add(Duration(days: 365)),
+      onDateChange: (selectedDate) {},
+      itemBuilder: (context, date, isSelected, onTap) {
+        return InkWell(
+          onTap: () {
+            calenderSelectedDate = date; // 2/11
+            getTodosFromFireStore();
           },
-          activeColor: ColorsManager.white,
-          dayProps: const EasyDayProps(
-              todayHighlightStyle: TodayHighlightStyle.withBackground,
-              todayHighlightColor: Color(0xffcddd79),
-              activeDayStyle: DayStyle(dayNumStyle: TextStyle(color: ColorsManager.blue,fontSize: 18,fontWeight: FontWeight.w700),dayStrStyle: TextStyle(color: ColorsManager.blue,fontSize: 15,fontWeight: FontWeight.w700)),
-              dayStructure: DayStructure.dayNumDayStr,
-              inactiveDayStyle: DayStyle(decoration: BoxDecoration(color: ColorsManager.white,borderRadius: BorderRadius.all(Radius.circular(12))))
-
-
+          child: Card(
+            elevation: 8,
+            color: ColorsManager.white,
+            shape:
+            RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  date.getDayName,
+                  style: isSelected
+                      ? MyTextStyle.calenderSelectedDate
+                      : MyTextStyle.calenderUnSelectedDate,
+                ),
+                Text(
+                  '${date.day}',
+                  style: isSelected
+                      ? MyTextStyle.calenderSelectedDate
+                      : MyTextStyle.calenderUnSelectedDate,
+                )
+              ],
+            ),
           ),
-        )
-      ],
+        );
+      },
     );
-
   }
-  readTodoFromFireStore() async{
-    CollectionReference todoCollection = FirebaseFirestore.instance.collection(TodoDM.collectionName);
+
+  void getTodosFromFireStore() async {
+    // todo
+
+    CollectionReference todoCollection = FirebaseFirestore.instance
+        .collection(UserDM.collectionName)
+        .doc(UserDM.currentUser!.id)
+        .collection(TodoDM.collectionName);
 
     QuerySnapshot collectionSnapShot = await todoCollection
         .where('dateTime',

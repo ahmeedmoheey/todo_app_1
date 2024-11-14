@@ -1,4 +1,5 @@
 
 class ImagesManager{
-static const String lightLogoBg = 'assets/images/logo@3x.png';
+static const String base = 'assets/images';
+static const String route = '$base/route_image.svg';
 }
