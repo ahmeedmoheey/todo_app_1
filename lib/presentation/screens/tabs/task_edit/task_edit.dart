@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:todo_app_1/core/utils/colors_manager.dart';
 import 'package:todo_app_1/core/utils/date_utils.dart';
-import '../../../../core/utils/my_text_style.dart';
 import '../../../../data_base_manager/todo_dm.dart';
 import '../../../../data_base_manager/user_DM.dart';
 
